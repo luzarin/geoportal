@@ -52,23 +52,26 @@ export default function Header({ onSearch }: HeaderProps) {
       </div>
 
       {/* Buscador de calles */}
-      <div className="flex items-center gap-2" style={{ marginRight: 22 }}>
-        <div className="relative flex items-center">
+      <div className="flex items-center gap-3" style={{ marginRight: 22 }}>
+        <div className="relative flex items-center h-9">
           <input
             type="text"
             placeholder="Buscar calle o ubicación..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="w-[26rem] md:w-[28rem] px-4 py-3 pr-3 text-sm bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+            className="h-9 w-[36rem] md:w-[40rem] text-sm bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 placeholder:text-gray-500"
+              style={{ padding: '0 2rem 0 5rem' }}
           />
+          {/* Falsa guía de padding izq (debug opcional) */}
         </div>
         <button
           onClick={handleSearch}
-          className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+          className="h-9 w-9 rounded-full border border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-colors grid place-items-center"
           aria-label="Buscar"
+          title="Buscar"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
             <circle cx="12" cy="10" r="3" />
           </svg>

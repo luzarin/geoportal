@@ -12,7 +12,9 @@ interface MapContainerProps {
 export default function MapContainer({ onMapLoad, activeLayers }: MapContainerProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [currentBasemap, setCurrentBasemap] = useState<'osm' | 'satellite' | 'topo'>('osm');
+  const customCtrlRef = useRef<HTMLDivElement>(null);
+  // Basemaps disponibles: osm (Estándar) y satellite (Satélite). Se elimina topo.
+  const [currentBasemap, setCurrentBasemap] = useState<'osm' | 'satellite'>('osm');
   const [showBasemapOptions, setShowBasemapOptions] = useState(false);
 
   useEffect(() => {
@@ -56,6 +58,34 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
       map.current = null;
     };
   }, [onMapLoad]);
+
+  // Align our custom controls horizontally centered with MapLibre's top-right control group
+  useEffect(() => {
+    const align = () => {
+      if (!mapContainer.current || !customCtrlRef.current) return;
+      const navGroup = mapContainer.current.querySelector(
+        '.maplibregl-ctrl-top-right .maplibregl-ctrl-group'
+      ) as HTMLElement | null;
+      if (!navGroup) return;
+      const containerRect = mapContainer.current.getBoundingClientRect();
+      const navRect = navGroup.getBoundingClientRect();
+      const myRect = customCtrlRef.current.getBoundingClientRect();
+      // Alinear centro con fórmula basada en right del nav (más estable):
+      // rightNav = distancia desde borde derecho del mapa al borde derecho del navGroup
+      const rightNav = containerRect.right - navRect.right;
+      // Ajuste para centrar: sumamos la diferencia de anchos / 2
+      const deltaWidth = (navRect.width - myRect.width) / 2;
+      // Nudge negativo mueve a la izquierda si sigue muy a la derecha
+  const nudge = -8; // microajuste: negativo = más a la izquierda, positivo = más a la derecha
+      const right = Math.max(0, rightNav + deltaWidth + nudge);
+      customCtrlRef.current.style.right = `${right}px`;
+    };
+
+    // Initial align and on resize
+    align();
+    window.addEventListener('resize', align);
+    return () => window.removeEventListener('resize', align);
+  }, [showBasemapOptions]);
 
   // Helper to add/remove a GeoJSON source+layers for a given id
   const ensureLayer = async (
@@ -160,7 +190,7 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeLayers]);
 
-  const handleBasemapChange = (type: 'osm' | 'satellite' | 'topo') => {
+  const handleBasemapChange = (type: 'osm' | 'satellite') => {
     if (!map.current) return;
     setCurrentBasemap(type);
 
@@ -175,17 +205,6 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
         }
       },
       layers: [{ id: 'satellite', type: 'raster', source: 'satellite', minzoom: 0, maxzoom: 22 }]
-    } : type === 'topo' ? {
-      version: 8,
-      sources: {
-        'topo': {
-          type: 'raster',
-          tiles: ['https://tile.opentopomap.org/{z}/{x}/{y}.png'],
-          tileSize: 256,
-          attribution: '© OpenTopoMap contributors'
-        }
-      },
-      layers: [{ id: 'topo', type: 'raster', source: 'topo', minzoom: 0, maxzoom: 17 }]
     } : {
       version: 8,
       sources: {
@@ -215,7 +234,8 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
 
       <div className="absolute bottom-24 right-4 text-gray-400 text-xs font-mono pointer-events-none select-none opacity-30">jjch</div>
 
-      <div className="absolute top-50 right-6.5 flex flex-col gap-2">
+  {/* Contenedor de controles personalizados (se alinea dinámicamente para centrar con los nativos) */}
+  <div ref={customCtrlRef} className="absolute top-50 flex-col gap-2" style={{ right: 25 }}>
         <div className="relative">
           <button onClick={() => setShowBasemapOptions(!showBasemapOptions)} className="bg-white rounded-md shadow-md p-3.5 hover:bg-gray-50 transition-colors border border-gray-300" title="Cambiar mapa base">
             <svg className="w-7 h-7 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -225,16 +245,32 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
             </svg>
           </button>
           {showBasemapOptions && (
-            <div className="absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden min-w-[140px] z-10">
-              <button onClick={() => handleBasemapChange('osm')} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${currentBasemap === 'osm' ? 'bg-emerald-50 text-emerald-700 font-medium' : 'text-gray-700'}`}>
-                <span>🗺️</span><span>Calles</span>
-              </button>
-              <button onClick={() => handleBasemapChange('topo')} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${currentBasemap === 'topo' ? 'bg-emerald-50 text-emerald-700 font-medium' : 'text-gray-700'}`}>
-                <span>🗻</span><span>Topográfico</span>
-              </button>
-              <button onClick={() => handleBasemapChange('satellite')} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${currentBasemap === 'satellite' ? 'bg-emerald-50 text-emerald-700 font-medium' : 'text-gray-700'}`}>
-                <span>🛰️</span><span>Satélite</span>
-              </button>
+            <div
+              className="absolute z-20"
+              style={{ top: 0, left: '-175px', width: '170px' }}
+            >
+              <div className="rounded-xl shadow-lg border border-gray-300 bg-white overflow-hidden py-2">
+                <button
+                  onClick={() => handleBasemapChange('osm')}
+                  className={`block w-full text-center px-8 h-10 leading-10 text-[16px] font-semibold tracking-normal transition-colors ${
+                    currentBasemap === 'osm'
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-gray-800 hover:bg-emerald-100'
+                  }`}
+                >
+                  Estándar
+                </button>
+                <button
+                  onClick={() => handleBasemapChange('satellite')}
+                  className={`block w-full text-center px-8 h-10 leading-10 text-[16px] font-semibold tracking-normal transition-colors ${
+                    currentBasemap === 'satellite'
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-gray-800 hover:bg-emerald-100'
+                  }`}
+                >
+                  Satélite
+                </button>
+              </div>
             </div>
           )}
         </div>
