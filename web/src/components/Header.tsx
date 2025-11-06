@@ -61,7 +61,7 @@ export default function Header({ onSearch }: HeaderProps) {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
             className="h-9 w-[36rem] md:w-[40rem] text-sm bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 placeholder:text-gray-500"
-              style={{ padding: '0 2rem 0 5rem' }}
+              style={{ padding: '0 2rem 0 1.5rem' }}
           />
           {/* Falsa guía de padding izq (debug opcional) */}
         </div>
