@@ -1,0 +1,34 @@
+Categoria,Variable,Valor
+Población,Población Total,"450,000"
+Población,Hombres,"220,000"
+Población,Mujeres,"230,000"
+Población,Menores de 18 años,"95,000"
+Población,Entre 18 y 65 años,"310,000"
+Población,Mayores de 65 años,"45,000"
+Vivienda,Total Viviendas,"125,000"
+Vivienda,Viviendas Ocupadas,"118,000"
+Vivienda,Viviendas Desocupadas,"7,000"
+Vivienda,Casas,"85,000"
+Vivienda,Departamentos,"38,000"
+Vivienda,Otros,"2,000"
+Fecundidad,Tasa de Natalidad,12.5%
+Fecundidad,Promedio hijos por mujer,1.8
+Vivienda y servicios básicos,Con agua potable,99.2%
+Vivienda y servicios básicos,Con alcantarillado,98.5%
+Vivienda y servicios básicos,Con electricidad,99.8%
+Vivienda y servicios básicos,Con recolección de basura,99.5%
+Inmigración,Población inmigrante,"35,000"
+Inmigración,Origen Venezuela,"15,000"
+Inmigración,Origen Haití,"8,000"
+Inmigración,Origen Perú,"7,000"
+Inmigración,Otros orígenes,"5,000"
+Discapacidad,Personas con discapacidad,"28,000"
+Discapacidad,Discapacidad física,"12,000"
+Discapacidad,Discapacidad sensorial,"8,000"
+Discapacidad,Discapacidad intelectual,"5,000"
+Discapacidad,Otras discapacidades,"3,000"
+Educación,Sin educación formal,"5,000"
+Educación,Educación básica,"85,000"
+Educación,Educación media,"200,000"
+Educación,Educación técnica,"90,000"
+Educación,Educación universitaria,"70,000"

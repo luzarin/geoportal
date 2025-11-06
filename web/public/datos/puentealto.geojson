@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "NOMBRE": "Puente Alto"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-70.6, -33.55],
+          [-70.55, -33.55],
+          [-70.55, -33.65],
+          [-70.6, -33.65],
+          [-70.6, -33.55]
+        ]]
+      }
+    }
+  ]
+}
