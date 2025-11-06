@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+// Ajuste manual para posicionar horizontalmente los íconos personalizados (px desde el borde derecho)
+const CUSTOM_CTRL_RIGHT = 25; // cambia este valor para moverlos
 import maplibregl from 'maplibre-gl';
 import { MAP_CENTER, MAP_ZOOM } from '../utils/constants';
 
@@ -59,33 +61,7 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
     };
   }, [onMapLoad]);
 
-  // Align our custom controls horizontally centered with MapLibre's top-right control group
-  useEffect(() => {
-    const align = () => {
-      if (!mapContainer.current || !customCtrlRef.current) return;
-      const navGroup = mapContainer.current.querySelector(
-        '.maplibregl-ctrl-top-right .maplibregl-ctrl-group'
-      ) as HTMLElement | null;
-      if (!navGroup) return;
-      const containerRect = mapContainer.current.getBoundingClientRect();
-      const navRect = navGroup.getBoundingClientRect();
-      const myRect = customCtrlRef.current.getBoundingClientRect();
-      // Alinear centro con fórmula basada en right del nav (más estable):
-      // rightNav = distancia desde borde derecho del mapa al borde derecho del navGroup
-      const rightNav = containerRect.right - navRect.right;
-      // Ajuste para centrar: sumamos la diferencia de anchos / 2
-      const deltaWidth = (navRect.width - myRect.width) / 2;
-      // Nudge negativo mueve a la izquierda si sigue muy a la derecha
-  const nudge = -8; // microajuste: negativo = más a la izquierda, positivo = más a la derecha
-      const right = Math.max(0, rightNav + deltaWidth + nudge);
-      customCtrlRef.current.style.right = `${right}px`;
-    };
-
-    // Initial align and on resize
-    align();
-    window.addEventListener('resize', align);
-    return () => window.removeEventListener('resize', align);
-  }, [showBasemapOptions]);
+  // Se elimina el auto-centrado para permitir ajuste manual y permanente vía constante.
 
   // Helper to add/remove a GeoJSON source+layers for a given id
   const ensureLayer = async (
@@ -235,7 +211,7 @@ export default function MapContainer({ onMapLoad, activeLayers }: MapContainerPr
       <div className="absolute bottom-24 right-4 text-gray-400 text-xs font-mono pointer-events-none select-none opacity-30">jjch</div>
 
   {/* Contenedor de controles personalizados (se alinea dinámicamente para centrar con los nativos) */}
-  <div ref={customCtrlRef} className="absolute top-50 flex-col gap-2" style={{ right: 25 }}>
+  <div ref={customCtrlRef} className="absolute top-50 flex-col gap-2" style={{ right: CUSTOM_CTRL_RIGHT }}>
         <div className="relative">
           <button onClick={() => setShowBasemapOptions(!showBasemapOptions)} className="bg-white rounded-md shadow-md p-3.5 hover:bg-gray-50 transition-colors border border-gray-300" title="Cambiar mapa base">
             <svg className="w-7 h-7 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
